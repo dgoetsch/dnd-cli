@@ -1,0 +1,79 @@
+{
+  "classes":[
+    {
+      "name": "Ranger",
+      "level": 3
+    }
+  ],
+  "ability_scores": {
+    "strength": { "value": 8 },
+    "dexterity": { "value": 17 },
+    "constitution": { "value": 13 },
+    "intelligence": { "value": 12 },
+    "wisdom": { "value": 15 },
+    "charisma": { "value": 10 }
+  },
+  "features":{
+    "proficiency": {
+      "children": {
+        "skill":{
+          "effects": [
+            {
+              "type": "Roll",
+              "bonus": {
+                "type": "Proficiency"
+              },
+              "scope": {
+                "path": ["skill", "stealth"]
+              }
+            }
+          ]
+        }
+      }
+    },
+    "skill": {
+      "effects": [
+        {
+          "type": "Roll",
+          "bonus": {
+            "type": "Roll",
+            "value": {
+              "dice": [
+                {
+                  "count": 1,
+                  "sides": 20
+                }
+              ]
+            }
+          },
+          "scope": {
+            "path": ["skill"]
+          }
+        },
+        {
+          "type": "Roll",
+          "bonus": {
+            "type": "Ability",
+            "value": "Dexterity"
+          },
+          "scope": {
+            "path": ["skill", "stealth"]
+          }
+        }
+      ],
+      "children": {
+        "stealth": {
+          "roll": {
+            "ability": "Dexterity",
+            "dice": [
+              {
+                "count": 1,
+                "sides": 20
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}
