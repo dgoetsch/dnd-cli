@@ -1,7 +1,6 @@
 use crate::domain::ability_score::Ability;
 use crate::domain::roll::Roll;
 use serde::{Deserialize, Serialize};
-use std::collections::HashSet;
 use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]
@@ -10,7 +9,7 @@ pub enum Effect {
     // Ability {
     //     bonus: AbilityScoreBonus,
     //     ability: Ability,
-    // },
+    // },x`
     Roll { bonus: RollBonus, scope: RollScope },
 }
 

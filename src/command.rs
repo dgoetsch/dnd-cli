@@ -8,7 +8,7 @@ pub enum RootCmd {
         name: String,
         #[structopt(subcommand)]
         cmd: CharacterCmd,
-    },
+    }
 }
 
 impl RootCmd {
@@ -23,4 +23,25 @@ pub enum CharacterCmd {
         #[structopt()]
         name: Vec<String>,
     },
+    Inventory {
+        #[structopt(subcommand)]
+        cmd: InventoryCmd
+    }
+}
+
+#[derive(StructOpt, Debug)]
+pub enum InventoryCmd {
+    Add {
+        #[structopt()]
+        name: String,
+        #[structopt()]
+        count: isize
+    },
+    Remove {
+        #[structopt()]
+        name: String,
+        #[structopt()]
+        count: isize
+    },
+    Show
 }

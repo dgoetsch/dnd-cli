@@ -4,14 +4,20 @@ use crate::domain::effect::Effect;
 use crate::domain::roll::Roll;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use crate::domain::inventory::Inventory;
 
 type FeatureName = String;
 
-#[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq, Default)]
 pub struct Character {
+    #[serde(default)]
     ability_scores: AbilityScores,
+    #[serde(default)]
     classes: Vec<CharacterClass>,
+    #[serde(default)]
     features: HashMap<FeatureName, Feature>,
+    #[serde(default)]
+    inventory: Inventory
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]
@@ -32,6 +38,16 @@ impl Character {
         self.ability_scores.get(ability)
     }
 
+    pub fn inventory(&mut self) -> &mut Inventory {
+        &mut self.inventory
+    }
+
+    pub fn with_inventory(&self, inventory: Inventory) -> Character {
+        Character {
+            inventory,
+            ..self.clone()
+        }
+    }
     pub fn get_feature(&self, name: &String) -> Option<&Feature> {
         self.features.get(name)
     }

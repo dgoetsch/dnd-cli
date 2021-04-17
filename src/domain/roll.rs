@@ -10,6 +10,7 @@ use std::collections::HashMap;
 use std::fmt::{Display, Formatter};
 use anyhow::Result;
 use std::io::Write;
+use crate::render::Render;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]
 pub struct Roll {
@@ -45,11 +46,15 @@ impl Roll {
                     rolled_dice: vec![],
                     bonus: bonus.clone(),
                 }),
-                RollBonus::Ability(ability) => Some(EffectResult {
-                    path: vec!(ability.to_string()),
-                    rolled_dice: vec![],
-                    bonus: character.get_ability_score(ability.clone()).modifier()
-                }),
+                RollBonus::Ability(ability) => {
+                    let mut path = path.clone();
+                    path.push(ability.to_string());
+                    Some(EffectResult {
+                        path,
+                        rolled_dice: vec![],
+                        bonus: character.get_ability_score(ability.clone()).modifier()
+                    })
+                },
                 RollBonus::Proficiency => None,
             })
             .collect::<Vec<EffectResult>>();
@@ -96,9 +101,7 @@ impl Render for RollResult {
         Ok(())
     }
 }
-pub trait Render {
-    fn render(&self, indent: usize, out: &mut std::io::Write) -> Result<()>;
-}
+
 
 
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]

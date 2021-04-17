@@ -1,0 +1,297 @@
+{
+  "features": {
+    "skill": {
+      "effects": [
+        {
+          "type": "Roll",
+          "bonus": {
+            "type": "Roll",
+            "value": {
+              "dice": [
+                {
+                  "count": 1,
+                  "sides": 20
+                }
+              ]
+            }
+          },
+          "scope": {
+            "path": [
+              "skill"
+            ]
+          }
+        },
+        {
+          "type": "Roll",
+          "bonus": {
+            "type": "Ability",
+            "value": "Dexterity"
+          },
+          "scope": {
+            "path": [
+              "skill",
+              "acrobatics"
+            ],
+            "ability": null,
+            "range": null
+          }
+        },
+        {
+          "type": "Roll",
+          "bonus": {
+            "type": "Ability",
+            "value": "Wisdom"
+          },
+          "scope": {
+            "path": [
+              "skill",
+              "animal-handling"
+            ],
+            "ability": null,
+            "range": null
+          }
+        },
+        {
+          "type": "Roll",
+          "bonus": {
+            "type": "Ability",
+            "value": "Intelligence"
+          },
+          "scope": {
+            "path": [
+              "skill",
+              "arcana"
+            ],
+            "ability": null,
+            "range": null
+          }
+        },
+        {
+          "type": "Roll",
+          "bonus": {
+            "type": "Ability",
+            "value": "Strength"
+          },
+          "scope": {
+            "path": [
+              "skill",
+              "athletics"
+            ],
+            "ability": null,
+            "range": null
+          }
+        },
+        {
+          "type": "Roll",
+          "bonus": {
+            "type": "Ability",
+            "value": "Charisma"
+          },
+          "scope": {
+            "path": [
+              "skill",
+              "deception"
+            ],
+            "ability": null,
+            "range": null
+          }
+        },
+        {
+          "type": "Roll",
+          "bonus": {
+            "type": "Ability",
+            "value": "Intelligence"
+          },
+          "scope": {
+            "path": [
+              "skill",
+              "history"
+            ],
+            "ability": null,
+            "range": null
+          }
+        },
+        {
+          "type": "Roll",
+          "bonus": {
+            "type": "Ability",
+            "value": "Wisdom"
+          },
+          "scope": {
+            "path": [
+              "skill",
+              "insight"
+            ],
+            "ability": null,
+            "range": null
+          }
+        },
+        {
+          "type": "Roll",
+          "bonus": {
+            "type": "Ability",
+            "value": "Charisma"
+          },
+          "scope": {
+            "path": [
+              "skill",
+              "intimidation"
+            ],
+            "ability": null,
+            "range": null
+          }
+        },
+        {
+          "type": "Roll",
+          "bonus": {
+            "type": "Ability",
+            "value": "Intelligence"
+          },
+          "scope": {
+            "path": [
+              "skill",
+              "investigation"
+            ],
+            "ability": null,
+            "range": null
+          }
+        },
+        {
+          "type": "Roll",
+          "bonus": {
+            "type": "Ability",
+            "value": "Wisdom"
+          },
+          "scope": {
+            "path": [
+              "skill",
+              "medicine"
+            ],
+            "ability": null,
+            "range": null
+          }
+        },
+        {
+          "type": "Roll",
+          "bonus": {
+            "type": "Ability",
+            "value": "Intelligence"
+          },
+          "scope": {
+            "path": [
+              "skill",
+              "nature"
+            ],
+            "ability": null,
+            "range": null
+          }
+        },
+        {
+          "type": "Roll",
+          "bonus": {
+            "type": "Ability",
+            "value": "Wisdom"
+          },
+          "scope": {
+            "path": [
+              "skill",
+              "perception"
+            ],
+            "ability": null,
+            "range": null
+          }
+        },
+        {
+          "type": "Roll",
+          "bonus": {
+            "type": "Ability",
+            "value": "Charisma"
+          },
+          "scope": {
+            "path": [
+              "skill",
+              "performance"
+            ],
+            "ability": null,
+            "range": null
+          }
+        },
+        {
+          "type": "Roll",
+          "bonus": {
+            "type": "Ability",
+            "value": "Charisma"
+          },
+          "scope": {
+            "path": [
+              "skill",
+              "persuasion"
+            ],
+            "ability": null,
+            "range": null
+          }
+        },
+        {
+          "type": "Roll",
+          "bonus": {
+            "type": "Ability",
+            "value": "Intelligence"
+          },
+          "scope": {
+            "path": [
+              "skill",
+              "religion"
+            ],
+            "ability": null,
+            "range": null
+          }
+        },
+        {
+          "type": "Roll",
+          "bonus": {
+            "type": "Ability",
+            "value": "Dexterity"
+          },
+          "scope": {
+            "path": [
+              "skill",
+              "sleight-of-hand"
+            ],
+            "ability": null,
+            "range": null
+          }
+        },
+        {
+          "type": "Roll",
+          "bonus": {
+            "type": "Ability",
+            "value": "Dexterity"
+          },
+          "scope": {
+            "path": [
+              "skill",
+              "stealth"
+            ],
+            "ability": null,
+            "range": null
+          }
+        },
+        {
+          "type": "Roll",
+          "bonus": {
+            "type": "Ability",
+            "value": "Wisdom"
+          },
+          "scope": {
+            "path": [
+              "skill",
+              "survival"
+            ],
+            "ability": null,
+            "range": null
+          }
+        }
+      ]
+    }
+  }
+}
