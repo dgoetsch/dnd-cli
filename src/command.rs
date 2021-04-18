@@ -44,4 +44,20 @@ pub enum InventoryCmd {
         name: Vec<String>,
     },
     Show,
+    Container {
+        #[structopt(subcommand)]
+        cmd: InventoryContainerCmd,
+    },
+}
+#[derive(StructOpt, Debug)]
+
+pub enum InventoryContainerCmd {
+    Add {
+        #[structopt()]
+        name: Vec<String>,
+    },
+    Remove {
+        #[structopt()]
+        name: Vec<String>,
+    },
 }

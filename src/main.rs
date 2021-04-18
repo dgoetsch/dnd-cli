@@ -73,6 +73,19 @@ fn handle_inventory_cmd(cmd: InventoryCmd, character: &mut Character) -> Result<
         InventoryCmd::Show => {
             render(character.inventory())?;
             Ok(())
+        },
+        InventoryCmd::Container { cmd } => {
+            match cmd {
+                InventoryContainerCmd::Add { name } => {
+                    let result = character.inventory().add_container(name)?;
+                    render(&result)?;
+                    Ok(())
+                },
+                InventoryContainerCmd::Remove { name } => {
+
+                    Ok(())
+                }
+            }
         }
     }
 }

@@ -43,7 +43,7 @@ impl Render for (&String, &InventoryItem) {
                 ))?;
             }
             (name, InventoryItem::Container { items }) => {
-                out.write_fmt(format_args!("{}{}:", Render::tab(indent), name))?;
+                out.write_fmt(format_args!("{}{}:\n", Render::tab(indent), name))?;
                 for name_item in items.iter().sorted_by_key(|(n, i)| n.clone()) {
                     name_item.render(indent + 1, out)?;
                 }
@@ -211,8 +211,56 @@ impl AddItemResult {
         }
     }
 }
-impl Inventory {
 
+pub enum AddContainerResult {
+    ExpectedContainer { path: Vec<String> },
+    Success { path: Vec<String> },
+    Collision { path: Vec<String> },
+    NoSuchParent { path: Vec<String> },
+    PathIsEmpty { path: Vec<String> }
+}
+
+impl AddContainerResult {
+    fn with_path(&self, path: Vec<String>) -> AddContainerResult {
+        match self {
+            AddContainerResult::ExpectedContainer { .. } => AddContainerResult::ExpectedContainer { path },
+            AddContainerResult::Success { .. } => AddContainerResult::Success { path },
+            AddContainerResult::Collision { .. } => AddContainerResult::Collision { path },
+            AddContainerResult::NoSuchParent { .. } => AddContainerResult::NoSuchParent { path },
+            AddContainerResult::PathIsEmpty { .. } => AddContainerResult::PathIsEmpty { path }
+        }
+
+    }
+}
+
+impl Render for AddContainerResult {
+    fn render(&self, indent: usize, out: &mut dyn Write) -> Result<()> {
+        match self {
+            AddContainerResult::ExpectedContainer { path } => {
+                out.write_fmt(format_args!("{}{}: Found an object in subpath\n", Render::tab(indent), path_string(path)))?;
+                Ok(())
+            }
+            AddContainerResult::Success { path } => {
+                out.write_fmt(format_args!("{}{}: Successfully created container\n", Render::tab(indent), path_string(path)))?;
+                Ok(())
+            }
+            AddContainerResult::Collision { path } => {
+                out.write_fmt(format_args!("{}{}: Cannot create an item that already exists\n", Render::tab(indent), path_string(path)))?;
+                Ok(())
+            }
+            AddContainerResult::NoSuchParent { path } => {
+                out.write_fmt(format_args!("{}{}: The container to put this in doesn't exist\n", Render::tab(indent), path_string(path)))?;
+                Ok(())
+            }
+            AddContainerResult::PathIsEmpty { path } => {
+                out.write_fmt(format_args!("{}{}: No path was provided\n", Render::tab(indent), path_string(path)))?;
+                Ok(())
+            }
+        }
+
+    }
+}
+impl Inventory {
     pub fn add_item(&mut self, path: Vec<String>, count: isize) -> Result<AddItemResult> {
         if let Some(name) = path.first() {
             let child_path = path
@@ -222,7 +270,8 @@ impl Inventory {
                 .collect::<Vec<String>>();
             let requested = count;
 
-            let result = self.items
+            let result = self
+                .items
                 .get_mut(name)
                 .map(|inventory_item| {
                     let path = path.clone();
@@ -269,15 +318,46 @@ impl Inventory {
 
             match &result {
                 Ok(AddItemResult::Success { available, .. }) => {
-                    if(available <= &0 && child_path.is_empty()) {
+                    if (available <= &0 && child_path.is_empty()) {
                         self.items.remove(name);
                     }
-                },
+                }
                 _ => {}
             }
             result
         } else {
             Ok(AddItemResult::InvalidPath { path })
+        }
+    }
+
+    pub fn add_container(&mut self, path: Vec<String>) -> Result<AddContainerResult> {
+        if let Some(first) = path.first() {
+            let child_path = path
+                .iter()
+                .skip(1)
+                .map(|s| s.clone())
+                .collect::<Vec<String>>();
+
+            match self.items.get_mut(first) {
+                Some(item) => {
+                 if(child_path.is_empty()) {
+                     Ok(AddContainerResult::Collision { path })
+                 } else {
+                     let result = item.add_container(child_path)?.with_path(path);
+                     Ok(result)
+                 }
+                },
+                None => {
+                    if(child_path.is_empty()) {
+                        self.items.insert(first.clone(), InventoryItem::Container { items: HashMap::new() });
+                        Ok(AddContainerResult::Success { path })
+                    } else {
+                        Ok(AddContainerResult::NoSuchParent { path })
+                    }
+                }
+            }
+        } else {
+            Ok(AddContainerResult::PathIsEmpty { path })
         }
     }
 }
@@ -312,7 +392,10 @@ impl InventoryItem {
                         .unwrap_or_else(|| {
                             let path = path.clone();
                             if (child_path.clone().is_empty()) {
-                                items.insert(first.clone(), InventoryItem::Object { count: requested });
+                                items.insert(
+                                    first.clone(),
+                                    InventoryItem::Object { count: requested },
+                                );
                                 Ok(AddItemResult::Success {
                                     path,
                                     requested: requested,
@@ -323,19 +406,21 @@ impl InventoryItem {
                             }
                         });
                     match &result {
-                        Ok(AddItemResult::Success { requested, available, .. }) => {
-                            if(available <= &0 && child_path.is_empty()) {
+                        Ok(AddItemResult::Success {
+                            requested,
+                            available,
+                            ..
+                        }) => {
+                            if (available <= &0 && child_path.is_empty()) {
                                 items.remove(first);
                             }
-                        },
-                        _ => {},
+                        }
+                        _ => {}
                     }
 
                     result
-                },
+                }
             }
-
-
         } else {
             let requested = count;
             match self {
@@ -359,6 +444,34 @@ impl InventoryItem {
                     Ok(AddItemResult::CannotAddOrRemoveContainer { path })
                 }
             }
+        }
+    }
+
+    fn add_container(&mut self, path: Vec<String>) -> Result<AddContainerResult> {
+        match self {
+            InventoryItem::Container { items } => {
+                if let Some(name) = path.first() {
+                    let child_path = path.iter().skip(1).map(|s| s.clone()).collect::<Vec<String>>();
+                    if(child_path.is_empty()) {
+                        match items.get(name) {
+                            None => {
+                                items.insert(name.clone(), InventoryItem::Container { items: HashMap::new() });
+                                Ok(AddContainerResult::Success { path })
+                            },
+                            _ => Ok(AddContainerResult::Collision { path })
+
+                        }
+                    } else {
+                        match items.get_mut(name) {
+                            None => Ok(AddContainerResult::NoSuchParent { path }),
+                            Some(item) => item.add_container(child_path)
+                        }
+                    }
+                } else {
+                    Ok(AddContainerResult::PathIsEmpty { path })
+                }
+            },
+            InventoryItem::Object { .. } => Ok(AddContainerResult::ExpectedContainer { path })
         }
     }
 }
