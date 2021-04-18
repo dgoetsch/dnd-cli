@@ -1,6 +1,8 @@
 use crate::domain::ability_score::Ability;
 use crate::domain::character::Character;
 use crate::domain::effect::{Effect, RollBonus};
+use crate::render::Render;
+use anyhow::Result;
 use itertools::structs::GroupBy;
 use itertools::Itertools;
 use rand::prelude::*;
@@ -8,9 +10,7 @@ use serde::{Deserialize, Serialize};
 use std::borrow::Borrow;
 use std::collections::HashMap;
 use std::fmt::{Display, Formatter};
-use anyhow::Result;
 use std::io::Write;
-use crate::render::Render;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]
 pub struct Roll {
@@ -35,7 +35,7 @@ impl Roll {
 
         let mut applicable_effects = effects
             .iter()
-            .flat_map(|(path, bonus)|  match bonus {
+            .flat_map(|(path, bonus)| match bonus {
                 RollBonus::Roll(roll) => Some(EffectResult {
                     path: path.clone(),
                     rolled_dice: roll.dice.iter().map(|d| d.roll()).collect(),
@@ -52,9 +52,9 @@ impl Roll {
                     Some(EffectResult {
                         path,
                         rolled_dice: vec![],
-                        bonus: character.get_ability_score(ability.clone()).modifier()
+                        bonus: character.get_ability_score(ability.clone()).modifier(),
                     })
-                },
+                }
                 RollBonus::Proficiency => None,
             })
             .collect::<Vec<EffectResult>>();
@@ -69,8 +69,8 @@ impl Roll {
             .flat_map(|(path, bonus)| match bonus {
                 RollBonus::Proficiency => Some(EffectResult {
                     path: path.clone(),
-                    rolled_dice: vec!(),
-                    bonus: character.proficiency_bonus()
+                    rolled_dice: vec![],
+                    bonus: character.proficiency_bonus(),
                 }),
                 _ => None,
             });
@@ -91,7 +91,10 @@ pub struct RollResult {
 
 impl Render for RollResult {
     fn render(&self, indent: usize, out: &mut dyn Write) -> Result<()> {
-        out.write_fmt(format_args!("{}Results\n", (0..indent).map(|_| '\t').collect::<String>()))?;
+        out.write_fmt(format_args!(
+            "{}Results\n",
+            (0..indent).map(|_| '\t').collect::<String>()
+        ))?;
         for effect in &self.effects {
             effect.render(indent + 1, out)?;
         }
@@ -102,8 +105,6 @@ impl Render for RollResult {
     }
 }
 
-
-
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]
 pub struct EffectResult {
     path: Vec<String>,
@@ -113,7 +114,12 @@ pub struct EffectResult {
 
 impl EffectResult {
     fn total_bonus(&self) -> isize {
-        self.bonus + self.rolled_dice.iter().map(|r| r.results.iter().sum::<isize>()).sum::<isize>()
+        self.bonus
+            + self
+                .rolled_dice
+                .iter()
+                .map(|r| r.results.iter().sum::<isize>())
+                .sum::<isize>()
     }
 }
 
@@ -129,11 +135,12 @@ impl Render for EffectResult {
             rolls
         };
 
-
-        out.write_fmt(format_args!("{}{}: {}\n",
-                                   (0..indent).map(|_| '\t').collect::<String>(),
-                                   self.path.iter().join(" / "),
-                                   bonus))?;
+        out.write_fmt(format_args!(
+            "{}{}: {}\n",
+            (0..indent).map(|_| '\t').collect::<String>(),
+            self.path.iter().join(" / "),
+            bonus
+        ))?;
         Ok(())
     }
 }
@@ -164,14 +171,23 @@ pub struct RolledDice {
 }
 
 fn text(rolled_dice: &RolledDice) -> Vec<String> {
-    rolled_dice.results.iter().map(|result| format!("[{} / {}]", result, rolled_dice.dice.sides)).collect()
+    rolled_dice
+        .results
+        .iter()
+        .map(|result| format!("[{} / {}]", result, rolled_dice.dice.sides))
+        .collect()
 }
 
 impl Render for RolledDice {
     fn render(&self, indent: usize, out: &mut dyn Write) -> Result<()> {
-        out.write_fmt(format_args!("{}{}\n",
-                                   (0..indent).map(|_| '\t').collect::<String>(),
-                                   self.results.iter().map(|result| format!("[{} / {}]", result, self.dice.sides)).join(", ")))?;
+        out.write_fmt(format_args!(
+            "{}{}\n",
+            (0..indent).map(|_| '\t').collect::<String>(),
+            self.results
+                .iter()
+                .map(|result| format!("[{} / {}]", result, self.dice.sides))
+                .join(", ")
+        ))?;
 
         Ok(())
     }

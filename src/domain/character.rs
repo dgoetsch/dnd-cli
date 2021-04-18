@@ -1,10 +1,10 @@
 use super::ability_score::AbilityScores;
 use crate::domain::ability_score::{Ability, AbilityScore};
 use crate::domain::effect::Effect;
+use crate::domain::inventory::Inventory;
 use crate::domain::roll::Roll;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use crate::domain::inventory::Inventory;
 
 type FeatureName = String;
 
@@ -17,13 +17,13 @@ pub struct Character {
     #[serde(default)]
     features: HashMap<FeatureName, Feature>,
     #[serde(default)]
-    inventory: Inventory
+    inventory: Inventory,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]
 pub struct CharacterClass {
     name: String,
-    level: isize
+    level: isize,
 }
 
 impl Character {

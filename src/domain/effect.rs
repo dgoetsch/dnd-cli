@@ -28,7 +28,7 @@ pub enum RollBonus {
     Modifier(isize),
     Roll(Roll),
     Proficiency,
-    Ability(Ability)
+    Ability(Ability),
 }
 
 // #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]

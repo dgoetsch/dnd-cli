@@ -23,40 +23,39 @@ impl Store {
     }
 }
 
-use serde_json::Value;
-use itertools::Itertools;
 use crate::domain::inventory::Inventory;
+use itertools::Itertools;
+use serde_json::Value;
 
 fn merge(a: Value, b: Value) -> Value {
-
     match (a, b) {
-        (Value::Object(a), Value::Object(b)) => {
-            Value::Object(a.keys().chain(b.keys()).dedup().flat_map(|key|{
-               match (a.get(key), b.get(key)) {
-                   (Some(a), Some(b)) => Some((key.clone(), merge(a.clone(), b.clone()))),
-                   (Some(a), None) => Some((key.clone(), a.clone())),
-                   (None, Some(b)) => Some((key.clone(), b.clone())),
-                   _ => None
-               }
-            }).collect())
-        },
+        (Value::Object(a), Value::Object(b)) => Value::Object(
+            a.keys()
+                .chain(b.keys())
+                .dedup()
+                .flat_map(|key| match (a.get(key), b.get(key)) {
+                    (Some(a), Some(b)) => Some((key.clone(), merge(a.clone(), b.clone()))),
+                    (Some(a), None) => Some((key.clone(), a.clone())),
+                    (None, Some(b)) => Some((key.clone(), b.clone())),
+                    _ => None,
+                })
+                .collect(),
+        ),
         (Value::Array(a), Value::Array(b)) => {
             let mut result = vec![];
             result.extend(a);
             result.extend(b);
             Value::Array(result)
         }
-        (a, _) => {
-            a
-        }
+        (a, _) => a,
     }
 }
-
 
 #[cfg(not(target_arch = "wasm32"))]
 impl Store {
     pub fn load_character(&self, name: &String) -> Result<Character> {
-        let template =std::fs::read_to_string(self.path_for("characters/template.json".to_string()))?;
+        let template =
+            std::fs::read_to_string(self.path_for("characters/template.json".to_string()))?;
         let template: Value = serde_json::from_str(template.as_str())?;
         let content = std::fs::read_to_string(self.path_for(format!("characters/{}.json", name)))?;
         let character: Value = serde_json::from_str(content.as_str())?;
@@ -77,8 +76,8 @@ impl Store {
 #[cfg(test)]
 mod test {
     use crate::domain::ability_score::Ability;
-    use serde::{Deserialize, Serialize};
     use crate::domain::effect::{Effect, RollBonus, RollScope};
+    use serde::{Deserialize, Serialize};
 
     #[derive(Debug, Clone, Serialize, Deserialize)]
     struct Skill {
@@ -89,21 +88,23 @@ mod test {
     fn skills() -> Vec<Skill> {
         serde_json::from_str::<Vec<Skill>>(
             &std::fs::read_to_string("./characters/skills.json").unwrap(),
-        ).unwrap()
+        )
+        .unwrap()
     }
 
     #[test]
     fn create_skills() {
         let skills = skills();
-        let effects = skills.iter().map(|skill| {
-            Effect::Roll {
+        let effects = skills
+            .iter()
+            .map(|skill| Effect::Roll {
                 bonus: RollBonus::Ability(skill.ability.clone()),
                 scope: RollScope {
                     path: Some(vec!["skill".to_string(), skill.name.to_lowercase()]),
                     ..RollScope::default()
-                }
-            }
-        }).collect::<Vec<Effect>>();
+                },
+            })
+            .collect::<Vec<Effect>>();
 
         println!("{}", serde_json::to_string(&effects).unwrap());
     }

@@ -1,7 +1,7 @@
 mod command;
 pub mod domain;
-mod store;
 pub mod render;
+mod store;
 
 use crate::domain::ability_score::{Ability, AbilityScore};
 use command::*;
@@ -12,10 +12,10 @@ fn main() {
     let cmd = command::RootCmd::parse();
     handle(cmd).unwrap();
 }
+use crate::domain::character::Character;
+use crate::domain::roll::Roll;
 use render::Render;
 use std::io::Write;
-use crate::domain::roll::Roll;
-use crate::domain::character::Character;
 
 fn handle(cmd: RootCmd) -> Result<()> {
     let store = store::Store::new("./")?;
@@ -25,7 +25,7 @@ fn handle(cmd: RootCmd) -> Result<()> {
             match cmd {
                 CharacterCmd::Roll { name } => {
                     handle_roll_cmd(name, &character)?;
-                },
+                }
                 CharacterCmd::Inventory { cmd } => {
                     handle_inventory_cmd(cmd, &mut character)?;
                     store.update(&name, character.inventory().clone())?;
@@ -50,8 +50,8 @@ fn handle_roll_cmd(name: Vec<String>, character: &Character) -> Result<()> {
         Some(_) => {
             let calc_result = Roll::calculate(&name, &character);
             render(&calc_result)?;
-        },
-        None => println!("Nothing to roll for {:?}", name)
+        }
+        None => println!("Nothing to roll for {:?}", name),
     };
     Ok(())
 }
@@ -60,16 +60,14 @@ fn handle_inventory_cmd(cmd: InventoryCmd, character: &mut Character) -> Result<
     match cmd {
         InventoryCmd::Add { name, count } => {
             let result = character.inventory().add_item(name.clone(), count)?;
-            let mut out = std::io::stdout();
-            out.write_fmt(format_args!("Added {} {}, I now have {}\n", count, name, result.count()))?;
-            out.flush()?;
             render(character.inventory())?;
-            Ok(())
-        },
-        InventoryCmd::Remove { name, count } => {
-            let result = character.inventory().remove_item(name, count)?;
             render(&result)?;
+            Ok(())
+        }
+        InventoryCmd::Remove { name, count } => {
+            let result = character.inventory().add_item(name, -count)?;
             render(character.inventory())?;
+            render(&result)?;
             Ok(())
         }
         InventoryCmd::Show => {
