@@ -7,9 +7,10 @@ use crate::domain::ability_score::{Ability, AbilityScore};
 use command::*;
 
 use anyhow::Result;
-
+use clap::{Clap, ValueHint};
 fn main() {
     let cmd = command::RootCmd::parse();
+
     handle(cmd).unwrap();
 }
 use crate::domain::character::Character;

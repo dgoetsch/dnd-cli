@@ -1,90 +1,83 @@
-use structopt::StructOpt;
+use clap::Clap;
 
-#[derive(StructOpt, Debug)]
-#[structopt(about = "Dnd Cli Utilities")]
+#[derive(Clap, Debug, PartialEq)]
+#[clap(about = "Dnd Cli Utilities")]
 pub enum RootCmd {
     Character {
-        #[structopt()]
+        #[clap()]
         name: String,
-        #[structopt(subcommand)]
+        #[clap(subcommand)]
         cmd: CharacterCmd,
     },
 }
 
-impl RootCmd {
-    pub fn parse() -> RootCmd {
-        RootCmd::from_args()
-    }
-}
-
-#[derive(StructOpt, Debug)]
+#[derive(Clap, Debug, PartialEq)]
 pub enum CharacterCmd {
     Roll {
-        #[structopt()]
+        #[clap()]
         name: Vec<String>,
     },
     Inventory {
-        #[structopt(subcommand)]
+        #[clap(subcommand)]
         cmd: InventoryCmd,
     },
     HitPoints {
-        #[structopt(subcommand)]
+        #[clap(subcommand)]
         cmd: HitPointsCmd
     }
 }
 
-#[derive(StructOpt, Debug)]
+#[derive(Clap, Debug, PartialEq)]
 pub enum HitPointsCmd {
     Show,
     IncreaseMax {
-        #[structopt()]
+        #[clap()]
         hit_points: isize
     },
     Add {
-        #[structopt()]
+        #[clap()]
         hit_points: isize
     },
     Remove {
-        #[structopt()]
+        #[clap()]
         hit_points: isize
     },
     AddTemporary {
-        #[structopt()]
+        #[clap()]
         hit_points: isize
     },
     ResetTemporary,
     Reset
 }
 
-#[derive(StructOpt, Debug)]
+#[derive(Clap, Debug, PartialEq)]
 pub enum InventoryCmd {
     Add {
-        #[structopt()]
+        #[clap()]
         count: isize,
-        #[structopt()]
+        #[clap()]
         name: Vec<String>,
     },
     Remove {
-        #[structopt()]
+        #[clap()]
         count: isize,
-        #[structopt()]
+        #[clap()]
         name: Vec<String>,
     },
     Show,
     Container {
-        #[structopt(subcommand)]
+        #[clap(subcommand)]
         cmd: InventoryContainerCmd,
     },
 }
-#[derive(StructOpt, Debug)]
-
+#[derive(Clap, Debug, PartialEq)]
 pub enum InventoryContainerCmd {
     Add {
-        #[structopt()]
+        #[clap()]
         name: Vec<String>,
     },
     Remove {
-        #[structopt()]
+        #[clap()]
         name: Vec<String>,
     },
 }
