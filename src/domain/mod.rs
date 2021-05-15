@@ -3,3 +3,4 @@ pub mod character;
 pub mod effect;
 pub mod inventory;
 pub mod roll;
+pub mod hit_points;

@@ -26,6 +26,7 @@ impl Store {
 use crate::domain::inventory::Inventory;
 use itertools::Itertools;
 use serde_json::Value;
+use crate::domain::hit_points::HitPoints;
 
 fn merge(a: Value, b: Value) -> Value {
     match (a, b) {
@@ -64,10 +65,18 @@ impl Store {
         Ok(character)
     }
 
-    pub fn update(&self, name: &String, inventory: Inventory) -> Result<()> {
+    pub fn update_inventory(&self, name: &String, inventory: Inventory) -> Result<()> {
         let content = std::fs::read_to_string(self.path_for(format!("characters/{}.json", name)))?;
         let mut character: Character = serde_json::from_str(content.as_str())?;
         let updated = serde_json::to_string(&character.with_inventory(inventory))?;
+        std::fs::write(self.path_for(format!("characters/{}.json", name)), updated)?;
+        Ok(())
+    }
+
+    pub fn update_hit_points(&self, name: &String, hit_points: HitPoints) -> Result<()> {
+        let content = std::fs::read_to_string(self.path_for(format!("characters/{}.json", name)))?;
+        let mut character: Character = serde_json::from_str(content.as_str())?;
+        let updated = serde_json::to_string(&character.with_hit_points(hit_points))?;
         std::fs::write(self.path_for(format!("characters/{}.json", name)), updated)?;
         Ok(())
     }

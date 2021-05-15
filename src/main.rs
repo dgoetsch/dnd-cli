@@ -28,7 +28,11 @@ fn handle(cmd: RootCmd) -> Result<()> {
                 }
                 CharacterCmd::Inventory { cmd } => {
                     handle_inventory_cmd(cmd, &mut character)?;
-                    store.update(&name, character.inventory().clone())?;
+                    store.update_inventory(&name, character.inventory().clone())?;
+                }
+                CharacterCmd::HitPoints { cmd } => {
+                    handle_hitpoints_cmd(cmd, &mut character)?;
+                    store.update_hit_points(&name, character.hit_points().clone())?;
                 }
             }
         }
@@ -36,6 +40,32 @@ fn handle(cmd: RootCmd) -> Result<()> {
     Ok(())
 }
 
+fn handle_hitpoints_cmd(cmd: HitPointsCmd, character: &mut Character) -> Result<()> {
+    match cmd {
+        HitPointsCmd::Show => { }
+        HitPointsCmd::IncreaseMax { hit_points } => {
+            character.hit_points().increase_max(hit_points);
+        }
+        HitPointsCmd::Add { hit_points } => {
+            character.hit_points().add_current(hit_points);
+        }
+        HitPointsCmd::Remove { hit_points } => {
+            character.hit_points().add_current(-hit_points);
+        }
+        HitPointsCmd::AddTemporary { hit_points } => {
+            character.hit_points().add_temporary(hit_points);
+        }
+        HitPointsCmd::ResetTemporary => {
+            character.hit_points().reset_temporary();
+        }
+        HitPointsCmd::Reset => {
+            character.hit_points().reset();
+        }
+    }
+
+    render(character.hit_points())?;
+    Ok(())
+}
 fn handle_roll_cmd(name: Vec<String>, character: &Character) -> Result<()> {
     match name.first().map(|n| n.as_str()) {
         Some("ability") => name

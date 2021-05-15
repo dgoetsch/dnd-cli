@@ -5,11 +5,14 @@ use crate::domain::inventory::Inventory;
 use crate::domain::roll::Roll;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-
+use std::io::Write;
+use crate::domain::hit_points::HitPoints;
 type FeatureName = String;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq, Default)]
 pub struct Character {
+    #[serde(default)]
+    hit_points: HitPoints,
     #[serde(default)]
     ability_scores: AbilityScores,
     #[serde(default)]
@@ -42,9 +45,20 @@ impl Character {
         &mut self.inventory
     }
 
+    pub fn hit_points(&mut self) -> &mut HitPoints {
+        &mut self.hit_points
+    }
+
     pub fn with_inventory(&self, inventory: Inventory) -> Character {
         Character {
             inventory,
+            ..self.clone()
+        }
+    }
+
+    pub fn with_hit_points(&self, hit_points: HitPoints) -> Character {
+        Character {
+            hit_points,
             ..self.clone()
         }
     }

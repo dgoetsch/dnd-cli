@@ -27,6 +27,33 @@ pub enum CharacterCmd {
         #[structopt(subcommand)]
         cmd: InventoryCmd,
     },
+    HitPoints {
+        #[structopt(subcommand)]
+        cmd: HitPointsCmd
+    }
+}
+
+#[derive(StructOpt, Debug)]
+pub enum HitPointsCmd {
+    Show,
+    IncreaseMax {
+        #[structopt()]
+        hit_points: isize
+    },
+    Add {
+        #[structopt()]
+        hit_points: isize
+    },
+    Remove {
+        #[structopt()]
+        hit_points: isize
+    },
+    AddTemporary {
+        #[structopt()]
+        hit_points: isize
+    },
+    ResetTemporary,
+    Reset
 }
 
 #[derive(StructOpt, Debug)]
