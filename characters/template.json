@@ -1,5 +1,118 @@
 {
   "features": {
+    "saving-throw": {
+      "effects": [
+        {
+          "type": "Roll",
+          "bonus": {
+            "type": "Roll",
+            "value": {
+              "dice": [
+                {
+                  "count": 1,
+                  "sides": 20
+                }
+              ]
+            }
+          },
+          "scope": {
+            "path": [
+              "saving-throw"
+            ]
+          }
+        },
+        {
+          "type": "Roll",
+          "bonus": {
+            "type": "Ability",
+            "value": "Dexterity"
+          },
+          "scope": {
+            "path": [
+              "saving-throw",
+              "dexterity"
+            ],
+            "ability": null,
+            "range": null
+          }
+        },
+        {
+          "type": "Roll",
+          "bonus": {
+            "type": "Ability",
+            "value": "Strength"
+          },
+          "scope": {
+            "path": [
+              "saving-throw",
+              "strength"
+            ],
+            "ability": null,
+            "range": null
+          }
+        },
+        {
+          "type": "Roll",
+          "bonus": {
+            "type": "Ability",
+            "value": "Constitution"
+          },
+          "scope": {
+            "path": [
+              "saving-throw",
+              "constitution"
+            ],
+            "ability": null,
+            "range": null
+          }
+        },
+        {
+          "type": "Roll",
+          "bonus": {
+            "type": "Ability",
+            "value": "Charisma"
+          },
+          "scope": {
+            "path": [
+              "saving-throw",
+              "charisma"
+            ],
+            "ability": null,
+            "range": null
+          }
+        },
+        {
+          "type": "Roll",
+          "bonus": {
+            "type": "Ability",
+            "value": "Wisdom"
+          },
+          "scope": {
+            "path": [
+              "saving-throw",
+              "wisdom"
+            ],
+            "ability": null,
+            "range": null
+          }
+        },
+        {
+          "type": "Roll",
+          "bonus": {
+            "type": "Ability",
+            "value": "Intelligence"
+          },
+          "scope": {
+            "path": [
+              "saving-throw",
+              "intelligence"
+            ],
+            "ability": null,
+            "range": null
+          }
+        }
+      ]
+    },
     "skill": {
       "effects": [
         {

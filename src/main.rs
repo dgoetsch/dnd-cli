@@ -24,7 +24,8 @@ fn handle(cmd: RootCmd) -> Result<()> {
         RootCmd::Character { name, cmd } => {
             let mut character = store.load_character(&name)?.clone();
             match cmd {
-                CharacterCmd::Roll { name } => {
+                CharacterCmd::Roll { cmd } => {
+                    let name = cmd.to_path();
                     handle_roll_cmd(name, &character)?;
                 }
                 CharacterCmd::Inventory { cmd } => {
@@ -36,9 +37,34 @@ fn handle(cmd: RootCmd) -> Result<()> {
                     store.update_hit_points(&name, character.hit_points().clone())?;
                 }
             }
+        },
+        RootCmd::Completions { shell } => {
+            completions::complete(shell);
         }
     };
     Ok(())
+}
+
+mod completions {
+    use std::io::stdout;
+
+    use clap::{Clap, IntoApp};
+    use clap_generate::{generators::*, generate};
+
+    use super::command::RootCmd;
+    use super::command::Shell;
+
+    pub fn complete(shell: Shell) {
+        let mut app = RootCmd::into_app();
+        let mut fd = std::io::stdout();
+        match shell {
+            Shell::Bash => generate::<Bash, _>(&mut app, "dnd-cli", &mut fd),
+            Shell::Zsh => generate::<Zsh, _>(&mut app, "dnd-cli", &mut fd),
+            Shell::Fish => generate::<Fish, _>(&mut app, "dnd-cli", &mut fd),
+            Shell::PowerShell => generate::<PowerShell, _>(&mut app, "dnd-cli", &mut fd),
+            Shell::Elvish => generate::<Elvish, _>(&mut app, "dnd-cli", &mut fd),
+        }
+    }
 }
 
 fn handle_hitpoints_cmd(cmd: HitPointsCmd, character: &mut Character) -> Result<()> {
