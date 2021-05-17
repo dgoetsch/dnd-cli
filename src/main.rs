@@ -11,18 +11,24 @@ use clap::{Clap, ValueHint};
 fn main() {
     let cmd = command::RootCmd::parse();
 
-    handle(cmd).unwrap();
+    match handle(cmd) {
+        Ok(_) => {},
+        Err(e) =>
+            println!("encountered an error {:?}", e)
+    }
 }
 use crate::domain::character::Character;
 use crate::domain::roll::Roll;
 use render::Render;
 use std::io::Write;
+use std::path::{Component, PathBuf};
 
 fn handle(cmd: RootCmd) -> Result<()> {
-    let store = store::Store::new("./")?;
+    let current_dir = std::env::current_dir()?;
+    let store = store::Store::new(current_dir)?;
     match cmd {
-        RootCmd::Character { name, cmd } => {
-            let mut character = store.load_character(&name)?.clone();
+        RootCmd::Character { cmd } => {
+            let mut character = store.load_character()?.clone();
             match cmd {
                 CharacterCmd::Roll { cmd } => {
                     let name = cmd.to_path();
@@ -30,11 +36,11 @@ fn handle(cmd: RootCmd) -> Result<()> {
                 }
                 CharacterCmd::Inventory { cmd } => {
                     handle_inventory_cmd(cmd, &mut character)?;
-                    store.update_inventory(&name, character.inventory().clone())?;
+                    store.update_inventory(character.inventory().clone())?;
                 }
                 CharacterCmd::HitPoints { cmd } => {
                     handle_hitpoints_cmd(cmd, &mut character)?;
-                    store.update_hit_points(&name, character.hit_points().clone())?;
+                    store.update_hit_points(character.hit_points().clone())?;
                 }
             }
         },
@@ -113,18 +119,31 @@ fn handle_roll_cmd(name: Vec<String>, character: &Character) -> Result<()> {
     Ok(())
 }
 
+fn parse_inventory_path(name: PathBuf) -> Vec<String> {
+    name.components()
+        .flat_map(|c| match c {
+            Component::Prefix(_) => None,
+            Component::RootDir => None,
+            Component::CurDir => None,
+            Component::ParentDir => None,
+            Component::Normal(name) => name.to_str().map(|s| s.to_string())
+        }).collect()
+}
 fn handle_inventory_cmd(cmd: InventoryCmd, character: &mut Character) -> Result<()> {
     match cmd {
         InventoryCmd::Add { name, count } => {
+            let name = parse_inventory_path(name);
             let result = character.inventory().add_item(name.clone(), count)?;
             render(character.inventory())?;
             render(&result)?;
             Ok(())
         }
         InventoryCmd::Remove { name, count } => {
+            let name = parse_inventory_path(name);
             let result = character.inventory().add_item(name, -count)?;
             render(character.inventory())?;
             render(&result)?;
+
             Ok(())
         }
         InventoryCmd::Show => {
@@ -134,6 +153,7 @@ fn handle_inventory_cmd(cmd: InventoryCmd, character: &mut Character) -> Result<
         InventoryCmd::Container { cmd } => {
             match cmd {
                 InventoryContainerCmd::Add { name } => {
+                    let name = parse_inventory_path(name);
                     let result = character.inventory().add_container(name)?;
                     render(&result)?;
                     Ok(())

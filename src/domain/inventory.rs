@@ -261,6 +261,14 @@ impl Render for AddContainerResult {
     }
 }
 impl Inventory {
+
+    pub fn new(items: HashMap<String, InventoryItem>) -> Inventory {
+        Inventory { items }
+    }
+    pub fn items(&self) -> &HashMap<String, InventoryItem> {
+        &self.items
+    }
+
     pub fn add_item(&mut self, path: Vec<String>, count: isize) -> Result<AddItemResult> {
         if let Some(name) = path.first() {
             let child_path = path
@@ -318,9 +326,9 @@ impl Inventory {
 
             match &result {
                 Ok(AddItemResult::Success { available, .. }) => {
-                    if (available <= &0 && child_path.is_empty()) {
-                        self.items.remove(name);
-                    }
+                    // if (available <= &0 && child_path.is_empty()) {
+                    //     self.items.remove(name);
+                    // }
                 }
                 _ => {}
             }
@@ -411,9 +419,9 @@ impl InventoryItem {
                             available,
                             ..
                         }) => {
-                            if (available <= &0 && child_path.is_empty()) {
-                                items.remove(first);
-                            }
+                            // if (available <= &0 && child_path.is_empty()) {
+                            //     items.remove(first);
+                            // }
                         }
                         _ => {}
                     }

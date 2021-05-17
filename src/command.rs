@@ -1,12 +1,13 @@
 use clap::Clap;
+use std::path::{PathBuf, Path};
 
 
 #[derive(Clap, Debug, PartialEq)]
 #[clap(about = "Dnd Cli Utilities")]
 pub enum RootCmd {
     Character {
-        #[clap(short, long)]
-        name: String,
+        // #[clap(short, long)]
+        // name: String,
         #[clap(subcommand)]
         cmd: CharacterCmd,
     },
@@ -131,16 +132,17 @@ pub enum HitPointsCmd {
 #[derive(Clap, Debug, PartialEq)]
 pub enum InventoryCmd {
     Add {
+
+        #[clap()]
+        name: PathBuf,
         #[clap()]
         count: isize,
-        #[clap()]
-        name: Vec<String>,
     },
     Remove {
         #[clap()]
-        count: isize,
+        name: PathBuf,
         #[clap()]
-        name: Vec<String>,
+        count: isize,
     },
     Show,
     Container {
@@ -152,11 +154,11 @@ pub enum InventoryCmd {
 pub enum InventoryContainerCmd {
     Add {
         #[clap()]
-        name: Vec<String>,
+        name: PathBuf,
     },
     Remove {
         #[clap()]
-        name: Vec<String>,
+        name: PathBuf,
     },
 }
 
