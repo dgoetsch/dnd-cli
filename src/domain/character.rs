@@ -5,7 +5,6 @@ use crate::domain::inventory::Inventory;
 use crate::domain::roll::Roll;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use std::io::Write;
 use crate::domain::hit_points::HitPoints;
 type FeatureName = String;
 

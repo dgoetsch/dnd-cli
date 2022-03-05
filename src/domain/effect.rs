@@ -6,10 +6,6 @@ use std::fmt::{Display, Formatter};
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]
 #[serde(tag = "type")]
 pub enum Effect {
-    // Ability {
-    //     bonus: AbilityScoreBonus,
-    //     ability: Ability,
-    // },x`
     Roll { bonus: RollBonus, scope: RollScope },
 }
 
@@ -30,21 +26,6 @@ pub enum RollBonus {
     Proficiency,
     Ability(Ability),
 }
-
-// #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]
-// pub enum Advantage {
-//     Advantage,
-//     Disadvantage,
-// }
-//
-// impl Display for Advantage {
-//     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-//         match self {
-//             Advantage::Advantage => write!(f, "Advantage"),
-//             Advantage::Disadvantage => write!(f, "Disadvantage"),
-//         }
-//     }
-// }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq, Default)]
 pub struct RollScope {

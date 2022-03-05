@@ -3,11 +3,11 @@ pub mod domain;
 pub mod render;
 mod store;
 
-use crate::domain::ability_score::{Ability, AbilityScore};
+use crate::domain::ability_score::Ability;
 use command::*;
 
 use anyhow::Result;
-use clap::{Clap, ValueHint};
+use clap::Parser;
 fn main() {
     let cmd = command::RootCmd::parse();
 
@@ -52,24 +52,18 @@ fn handle(cmd: RootCmd) -> Result<()> {
 }
 
 mod completions {
-    use std::io::stdout;
-
-    use clap::{Clap, IntoApp};
-    use clap_generate::{generators::*, generate};
+    use clap_complete::{generate, Shell, Generator};
+    use clap::CommandFactory;
 
     use super::command::RootCmd;
-    use super::command::Shell;
 
+
+    fn print_completions<G: Generator>(gen: G, app: &mut clap::Command) {
+        generate(gen, app, app.get_name().to_string(), &mut std::io::stdout());
+    }
     pub fn complete(shell: Shell) {
-        let mut app = RootCmd::into_app();
-        let mut fd = std::io::stdout();
-        match shell {
-            Shell::Bash => generate::<Bash, _>(&mut app, "dnd-cli", &mut fd),
-            Shell::Zsh => generate::<Zsh, _>(&mut app, "dnd-cli", &mut fd),
-            Shell::Fish => generate::<Fish, _>(&mut app, "dnd-cli", &mut fd),
-            Shell::PowerShell => generate::<PowerShell, _>(&mut app, "dnd-cli", &mut fd),
-            Shell::Elvish => generate::<Elvish, _>(&mut app, "dnd-cli", &mut fd),
-        }
+        let mut app = RootCmd::command();
+        print_completions(shell, &mut app);
     }
 }
 

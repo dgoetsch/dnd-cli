@@ -1,14 +1,10 @@
-use crate::domain::ability_score::Ability;
 use crate::domain::character::Character;
 use crate::domain::effect::{Effect, RollBonus};
 use crate::render::Render;
 use anyhow::Result;
-use itertools::structs::GroupBy;
 use itertools::Itertools;
 use rand::prelude::*;
 use serde::{Deserialize, Serialize};
-use std::borrow::Borrow;
-use std::collections::HashMap;
 use std::fmt::{Display, Formatter};
 use std::io::Write;
 

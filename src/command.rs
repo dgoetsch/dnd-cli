@@ -1,23 +1,19 @@
-use clap::Clap;
-use std::path::{PathBuf, Path};
+use std::path::PathBuf;
 
-
-#[derive(Clap, Debug, PartialEq)]
+#[derive(clap::Parser, Clone, Debug, PartialEq)]
 #[clap(about = "Dnd Cli Utilities")]
 pub enum RootCmd {
     Character {
-        // #[clap(short, long)]
-        // name: String,
         #[clap(subcommand)]
         cmd: CharacterCmd,
     },
     Completions {
-        #[clap(arg_enum, value_name="SHELL")]
-        shell: Shell,
+        #[clap()]
+        shell: clap_complete::Shell,
     }
 }
 
-#[derive(Clap, Debug, PartialEq)]
+#[derive(clap::Subcommand, Clone, Debug, PartialEq)]
 pub enum CharacterCmd {
     Roll {
         #[clap(subcommand)]
@@ -32,18 +28,18 @@ pub enum CharacterCmd {
         cmd: HitPointsCmd
     }
 }
-#[derive(Clap, Debug, PartialEq)]
+#[derive(clap::Subcommand, Clone, Debug, PartialEq)]
 pub enum RollCmd {
     Skill {
-        #[clap(subcommand)]
+        #[clap(arg_enum)]
         skill: Skill
     },
     Ability {
-        #[clap(subcommand)]
+        #[clap(arg_enum)]
         ability: Ability
     },
     SavingThrow {
-        #[clap(subcommand)]
+        #[clap(arg_enum)]
         ability: Ability
     }
 }
@@ -64,7 +60,7 @@ impl RollCmd {
     }
 }
 
-#[derive(Clap, Debug, PartialEq)]
+#[derive(clap::ArgEnum, Clone, Debug, PartialEq)]
 pub enum Ability {
     Strength,
     Dexterity,
@@ -74,7 +70,7 @@ pub enum Ability {
     Charisma,
 }
 
-#[derive(Clap, Debug, PartialEq)]
+#[derive(clap::ArgEnum, Clone, Debug, PartialEq)]
 pub enum Skill {
     Acrobatics,
     AnimalHandling,
@@ -106,7 +102,7 @@ impl Skill {
     }
 }
 
-#[derive(Clap, Debug, PartialEq)]
+#[derive(clap::Subcommand, Clone, Debug, PartialEq)]
 pub enum HitPointsCmd {
     Show,
     IncreaseMax {
@@ -129,7 +125,7 @@ pub enum HitPointsCmd {
     Reset
 }
 
-#[derive(Clap, Debug, PartialEq)]
+#[derive(clap::Subcommand, Clone, Debug, PartialEq)]
 pub enum InventoryCmd {
     Add {
 
@@ -150,7 +146,7 @@ pub enum InventoryCmd {
         cmd: InventoryContainerCmd,
     },
 }
-#[derive(Clap, Debug, PartialEq)]
+#[derive(clap::Subcommand, Clone, Debug, PartialEq)]
 pub enum InventoryContainerCmd {
     Add {
         #[clap()]
@@ -160,13 +156,4 @@ pub enum InventoryContainerCmd {
         #[clap()]
         name: PathBuf,
     },
-}
-
-#[derive(Clap, Copy, Clone, Debug, PartialEq)]
-pub enum Shell {
-    Bash,
-    Zsh,
-    Fish,
-    PowerShell,
-    Elvish
 }
